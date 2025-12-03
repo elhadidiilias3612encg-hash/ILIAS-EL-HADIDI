@@ -1,0 +1,383 @@
+
+
+Compte Rendu concernant l'analyse du Dataset « Default of Credit Card Clients »
+■ 1. Introduction
+Ce compte rendu présente une analyse complète du dataset **Default of Credit Card Clients in
+Taiwan**, largement utilisé pour des projets de classification binaire en finance. Il contient des
+informations financières, démographiques et comportementales de 30 000 clients de cartes de
+crédit, permettant de prédire le **risque de défaut de paiement le mois suivant**.
+Ce travail inclut :
+- Préparation et nettoyage des données
+- Encodage et normalisation  
+- Feature engineering
+- Visualisation et analyse exploratoire
+- Entraînement de modèles de machine learning
+- Comparaison des performances
+- Validation croisée (Cross-validation)
+- Optimisation des hyperparamètres
+---
+■ 2. Description du Dataset
+Le dataset comprend **25 variables**, regroupées comme suit :
+✔ Informations démographiques
+- Sexe, âge, niveau d’éducation, statut marital.
+✔ Informations financières
+- LIMIT_BAL : limite de crédit accordée.
+✔ Historique de paiement (PAY_0 → PAY_6)
+Statut de paiement mensuel (−1 = paiement normal, 1 à 9 = retard de 1 à 9 mois ou plus).
+✔ Montants de factures (BILL_AMT1 → BILL_AMT6)
+Montants des factures des 6 derniers mois.
+✔ Montants payés (PAY_AMT1 → PAY_AMT6)
+Sommes payées au cours des 6 derniers mois.
+✔ Variable cible
+default.payment.next.month :
+- **1** = défaut
+- **0** = pas de défaut
+---
+■ 3. Préparation des Données
+✔ Nettoyage
+- Suppression des doublons
+- Vérification de la complétude : **aucune valeur manquante**
+✔ Encodage
+- One-Hot Encoding pour EDUCATION, MARRIAGE, PAY_0 à PAY_6
+- SEX conservé comme variable binaire
+✔ Normalisation
+Utilisation de **StandardScaler** pour :
+- LIMIT_BAL
+- AGE
+- BILL_AMT1 → BILL_AMT6
+- PAY_AMT1 → PAY_AMT6
+---
+■ 4. Feature Engineering
+Création de nouvelles variables pertinentes :
+- AVG_BILL_AMT : moyenne des factures
+- AVG_PAY_AMT : moyenne des paiements
+- UTIL_RATIO : ratio d’utilisation du crédit
+- (moyenne des factures / limite de crédit)
+Ces variables améliorent la compréhension du comportement financier.
+---
+■ 5. Analyse Exploratoire
+✔ Histogrammes
+- LIMIT_BAL : distribution asymétrique → peu de clients très fortunés
+- BILL_AMT : corrélation temporelle forte
+- PAY_AMT : grande dispersion et outliers
+✔ Boxplots
+- Présence d’outliers sur BILL_AMT et PAY_AMT
+- Age : distribution relativement stable
+✔ Heatmap de corrélation
+- Corrélation élevée entre les BILL_AMT
+- Corrélation forte entre LIMIT_BAL et BILL_AMT
+- PAY_AMT faiblement corrélé au défaut
+---
+■ 6. Modèles de Machine Learning
+Modèles entraînés :
+- **Régression Logistique**
+- **Decision Tree**
+- **Random Forest**
+Résultats (test set) :
+| Modèle | Accuracy | Precision | Recall | F1 |
+|--------|----------|-----------|--------|-----|
+| Logistic Regression | 0.8188 | 0.6667 | 0.3442 | 0.4540 |
+| Decision Tree | 0.7170 | 0.3681 | 0.4090 | 0.3874 |
+| Random Forest | **0.8197** | 0.6571 | 0.3679 | **0.4717** |
+➡ **Random Forest gagne** avec le meilleur F1-score.
+---
+■ 7. Cross-Validation (5-fold)
+Résultats moyens :
+| Modèle | Accuracy | Precision | Recall | F1 |
+|--------|----------|-----------|--------|-----|
+| Logistic Reg. | **0.8201** | **0.6791** | 0.3546 | 0.4659 |
+| Decision Tree | 0.7272 | 0.3908 | **0.4174** | 0.4036 |
+| Random Forest | 0.8162 | 0.6506 | 0.3657 | **0.4682** |
+➡ **Logistic Regression → meilleure précision**
+➡ **Random Forest → meilleur F1-score global**
+---
+■ 8. Hyperparameter Tuning (GridSearchCV)
+Meilleurs paramètres trouvés :
+- **Logistic Regression :** C=1, penalty='l2'
+- **Decision Tree :** max_depth=10, criterion='gini'
+- **Random Forest :** n_estimators=200, max_depth=20, leaf=1
+➡ Les modèles tunés améliorent légèrement les scores, comme attendu.
+---
+■ 9. Conclusion Générale
+L’analyse complète du dataset de défaut de paiement montre que :
+- Les comportements de paiement passés sont les meilleurs indicateurs du risque.
+- Les montants des factures sont fortement corrélés entre eux.
+- Le taux d’utilisation du crédit est un puissant indicateur du risque.
+■ Meilleur modèle global :
+■ **Random Forest** (meilleur F1-score, robuste et performant)
+✔ Applications possibles :
+- Systèmes de scoring de crédit
+- Modèles de décision automatisés
+- Détection de comportements à risque
+---
+■ 10. Recommandations
+- Utiliser un modèle d’ensemble (Random Forest ou XGBoost)
+- Optimiser les seuils de décision selon le coût des erreurs
+- Explorer le SMOTE pour équilibrer les classes
+- Tester des modèles avancés : XGBoost, LightGBM, CatBoos. donner moi ce compte rendu d'une manière plus structuré et détaillé on se basant sur les données partagé antérieurement  
+ChatGPT a dit :
+
+Voici une version beaucoup plus structurée, professionnelle, détaillée et académique de votre compte rendu, parfaitement adaptée pour un rapport universitaire, un projet de data science, ou un document professionnel utilisé en finance.
+
+📘 COMPTE RENDU STRUCTURÉ & DÉTAILLÉ
+Analyse du Dataset « Default of Credit Card Clients »
+1. Introduction
+
+L’objectif de cette étude est d’analyser en profondeur le dataset Default of Credit Card Clients in Taiwan, une référence dans les projets de classification binaire en finance. Il regroupe des informations complètes sur 30 000 clients de cartes de crédit entre avril et septembre 2005, incluant :
+
+Données démographiques
+
+Données financières
+
+Historique comportemental de paiement
+
+Montants facturés et payés
+
+Statut de défaut de paiement (variable cible)
+
+L’enjeu principal de cette analyse est de construire un modèle prédictif capable d’identifier les clients susceptibles de faire défaut le mois suivant.
+Ce rapport couvre :
+
+Préparation et nettoyage des données
+
+Encodage et mise à l’échelle
+
+Feature engineering
+
+Analyse exploratoire (EDA)
+
+Modélisation (classification)
+
+Validation croisée
+
+Optimisation des hyperparamètres
+
+Conclusions et recommandations
+
+2. Présentation du Dataset
+
+Le dataset comporte 25 variables, réparties en 6 catégories principales :
+
+2.1 Variables démographiques
+
+SEX : Sexe du client (1 = homme, 2 = femme)
+
+AGE : Âge en années
+
+EDUCATION : Niveau d’éducation (1 = graduate school, …)
+
+MARRIAGE : Statut marital (1 = marié, 2 = célibataire…)
+
+✔ Objectif : estimer l’influence socio-économique sur le risque de défaut
+
+2.2 Variable financière
+
+LIMIT_BAL : Limite de crédit autorisée
+
+✔ Indicateur essentiel pour mesurer la capacité financière
+
+2.3 Historique de remboursement (PAY_0 → PAY_6)
+
+Chaque variable indique le retard de paiement mensuel sur les 6 derniers mois :
+
+−1 : Paiement effectué dans les délais
+
+0 : Montant dû mais payé tardivement
+
+1 à 9 : Retards de 1 à ≥9 mois
+
+✔ Variables clés pour modéliser le comportement de paiement
+
+2.4 Montants des factures (BILL_AMTx)
+
+Six mois de factures (avril → septembre 2005)
+
+2.5 Montants des paiements (PAY_AMTx)
+
+Six mois de montants réellement payés
+
+2.6 Variable cible
+
+default.payment.next.month :
+
+1 = client en défaut
+
+0 = client non défaillant
+
+3. Préparation des Données
+3.1 Nettoyage
+
+✔ Suppression des lignes dupliquées
+
+✔ Vérification des types
+
+✔ Aucune valeur manquante détectée (rare et précieux en finance)
+
+3.2 Encodage
+
+One-Hot Encoding appliqué à :
+
+EDUCATION
+
+MARRIAGE
+
+PAY_0 → PAY_6
+
+SEX conservé comme binaire
+
+Nombre total de colonnes après encodage : 92
+
+➡ Encodage crucial pour rendre les données exploitables par les algorithmes ML
+
+3.3 Normalisation
+
+Utilisation de StandardScaler sur toutes les variables numériques continues :
+
+LIMIT_BAL
+
+AGE
+
+BILL_AMT1 → BILL_AMT6
+
+PAY_AMT1 → PAY_AMT6
+
+✔ Permet d’améliorer les performances des modèles linéaires
+✔ Limite l’influence disproportionnée des variables très dispersées
+
+4. Feature Engineering
+
+Création de trois nouvelles variables stratégiques :
+
+1. AVG_BILL_AMT
+
+→ moyenne des montants facturés sur 6 mois
+🔎 Permet d’identifier les clients avec une tendance de dépenses élevée
+
+2. AVG_PAY_AMT
+
+→ moyenne des paiements
+🔎 Indique le comportement de remboursement
+
+3. UTIL_RATIO
+
+→ (AVG_BILL_AMT / LIMIT_BAL)
+🔎 Indicateur majeur en scoring bancaire → mesure du risque
+
+✔ Ces features améliorent la capacité prédictive des modèles
+
+5. Analyse Exploratoire (EDA)
+5.1 Histogrammes
+
+LIMIT_BAL : distribution très asymétrique, majorité des clients avec une limite faible
+
+BILL_AMT : forte corrélation temporelle (logique)
+
+PAY_AMT : forte dispersion, beaucoup de paiements faibles et rares paiements très élevés
+
+5.2 Boxplots
+
+Outliers très présents sur BILL_AMT et PAY_AMT → clients avec comportements extrêmes
+
+AGE : distribution stable, légère concentration entre 30–45 ans
+
+5.3 Corrélations (Heatmap)
+
+Corrélations fortes entre les BILL_AMT (0.90+)
+
+Corrélation positive LIMIT_BAL ↔ BILL_AMT
+
+Corrélation faible entre PAY_AMT et défaut (surprenante mais cohérente, forte disparité des montants)
+
+➡ Hypothèse confirmée : le comportement de paiement (PAY_x) est le meilleur prédicteur du défaut
+
+6. Modélisation (Machine Learning)
+Modèles utilisés
+
+Régression Logistique
+
+Decision Tree
+
+Random Forest
+
+Résultats (Test set)
+Modèle	Accuracy	Precision	Recall	F1
+Logistic Regression	0.8188	0.6667	0.3442	0.4540
+Decision Tree	0.7170	0.3681	0.4090	0.3874
+Random Forest	0.8197	0.6571	0.3679	0.4717
+
+📌 Analyse :
+
+Le Decision Tree est trop simple → faible précision
+
+Logistic Regression → excellent modèle pour réduire les faux positifs
+
+Random Forest est le modèle le plus performant globalement (meilleur F1)
+
+➡ Il offre la meilleure stabilité + meilleure capacité de généralisation
+
+7. Validation Croisée (5-fold)
+Modèle	Accuracy	Precision	Recall	F1
+Logistic Reg.	0.8201	0.6791	0.3546	0.4659
+Decision Tree	0.7272	0.3908	0.4174	0.4036
+Random Forest	0.8162	0.6506	0.3657	0.4682
+
+📌 Interprétation :
+
+Logistic Regression → meilleure précision (idéal pour éviter de refuser de bons clients)
+
+Random Forest → meilleure robustesse générale
+
+Decision Tree → très variable, faible généralisation
+
+➡ Random Forest reste le modèle recommandé
+
+8. Optimisation des Hyperparamètres
+Meilleurs paramètres obtenus via GridSearchCV :
+
+Logistic Regression : C=1, penalty='l2'
+
+Decision Tree : max_depth=10, criterion='gini'
+
+Random Forest : n_estimators=200, max_depth=20, min_samples_leaf=1
+
+➡ L’amélioration est légère mais confirme la pertinence des modèles
+
+9. Conclusion Générale
+✔ Résultats essentiels :
+
+Les retards de paiement passés (PAY_0 → PAY_6) sont les variables les plus prédictives
+
+Le taux d’utilisation du crédit est un indicateur puissant
+
+Les Random Forest offrent une performance robuste et équilibrée
+
+La régression logistique est préférable lorsque la précision est prioritaire
+
+🏆 Meilleur modèle global : Random Forest
+
+Meilleur F1-score
+
+Grande stabilité
+
+Bien adapté aux données complexes et bruitées
+
+10. Recommandations
+✔ Approche Modèle
+
+Privilégier Random Forest ou XGBoost
+
+Tester LightGBM et CatBoost pour comparaison
+
+✔ Prétraitement
+
+Tester SMOTE pour gérer le déséquilibre des classes
+
+Ajuster les seuils de décision selon le coût du risque
+
+✔ Approfondissements futurs
+
+Analyse des importance features
+
+Courbes ROC / AUC
+
+Explicabilité (SHAP values)
